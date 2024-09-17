@@ -62,7 +62,7 @@ class CommandsCog(commands.Cog):
             version=version,
             bot_name=ctx.guild.name,
             bot_icon=ctx.guild.icon,
-            thumbnail_url="https/cdn.discordapp.com/avatars/1285105979947749406/3a8b148f12e07c1d83c32d4ed26f618e.png"
+            thumbnail_url="https://cdn.discordapp.com/avatars/1285105979947749406/3a8b148f12e07c1d83c32d4ed26f618e.png"
         )
 
         view = AboutWithButtons.create_view()
