@@ -23,11 +23,14 @@ class SayCommandCog(commands.Cog):
         
 
         try:
-            await ctx.message.delete()
+            if ctx.message:
+                await ctx.message.delete()
+                
             await ctx.send(message)
         except Exception as e:
             error_id = shortuuid.ShortUUID().random(length=8)
             await send_error_embed(interaction, e, error_id)
+            
             
 
 
