@@ -127,7 +127,7 @@ class CommandsCog(commands.Cog):
 
         # Roles (show only a few for brevity and a count)
         
-        roles_list = ', '.join([role.mention for role in guild.roles[1:11]])
+        roles_list = ', '.join([role.mention for role in guild.roles[1:20]])
         if role_count > 20:
             roles_list += f"... and {role_count - 20} more roles."
         embed.add_field(name=f"Roles ({role_count})", value=roles_list, inline=False)
