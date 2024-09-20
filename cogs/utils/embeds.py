@@ -381,3 +381,19 @@ class ServerInformationEmbed:
 
 
         return embed
+    
+    
+
+# This is the role success emebed for when a action is performed with roles.
+    
+class RoleSuccessEmbed(discord.Embed):
+    def __init__(self, title: str, description: str):
+        super().__init__(title=title, description=description, color=discord.Color.green())
+        
+        
+        
+# This is the channel success emebed for when channel and category functions are used.        
+        
+class ChannelSuccessEmbed(discord.Embed):
+    def __init__(self, title: str, description: str):
+        super().__init__(title=title, description=description, color=discord.Color.green())
