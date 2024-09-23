@@ -144,13 +144,16 @@ class ExitSetupEmbed(discord.Embed):
 
 class AboutEmbed:
     @staticmethod
-    def create_info_embed(uptime, guilds, users, latency, version, bot_name, bot_icon, thumbnail_url):
+    def create_info_embed(uptime, guilds, users, latency, version, bot_name, bot_icon, shards, cluster, environment, command_run_time, thumbnail_url):
         embed = discord.Embed(
             description=(
                 "Merx is an exceptional moderation and management tool designed specifically for community servers."
             ),
             color=discord.Color.from_str('#2a2c30')
         )
+
+
+        embed.add_field(name="",value=(""),inline=False)
 
 
         embed.add_field(
@@ -161,19 +164,27 @@ class AboutEmbed:
                 f"> **Uptime:** <t:{int((uptime.timestamp()))}:R>\n"
                 f"> **Latency:** {round(latency * 1000)}ms"
             ),
-            inline=False
+            inline=True
         )
 
 
         embed.add_field(
             name="System Information",
             value=(
-                f"> **Discord API Wrapper:** discord.py {discord.__version__}\n"
-                f"> **Database System:** MongoDB {version}\n"
+                f"> **Language:** Python\n"
+                f"> **Database:** MongoDB {version}\n"
                 f"> **Host OS:** {platform.system()}\n"
                 f"> **Host:** Cali Web Design"
             ),
-            inline=False
+            inline=True
+        )
+        
+        
+        embed.add_field(name="",value=(""),inline=False)
+        
+        
+        embed.set_footer(
+            text=f"Cluster {cluster} | Shard {shards} | {environment} • {command_run_time}"
         )
 
 
@@ -190,25 +201,10 @@ class AboutWithButtons:
     def create_view():
         view = View()
 
-        async def commands_callback(interaction: discord.Interaction):
-            await interaction.response.defer()
-            help_command = interaction.client.get_command('help')
-            
-            
-            if help_command:
-                await help_command(interaction)
-            else:
-                await interaction.response.send_message("Help command not found.", ephemeral=True)
-
-
-        commands_button = Button(label="Commands", row=0, style=discord.ButtonStyle.primary, custom_id='commands_button')
-        commands_button.callback = commands_callback
-        view.add_item(commands_button)
-        
 
         support_server_button = Button(
             label="Support Server", 
-            style=discord.ButtonStyle.link, 
+            style=discord.ButtonStyle.primary, 
             url="https://discord.gg/nAX4yhVEgy"
         )
         
@@ -346,15 +342,21 @@ class ServerInformationEmbed:
         # Add fields to the embed
         
         embed.set_thumbnail(url=icon_url)
-        embed.add_field(name="Server Owner", value=f"{owner}", inline=False)
-        embed.add_field(name="Member Count", value=f"{member_count}", inline=False)
-        embed.add_field(name="Creation Date", value=f"{created_at}", inline=False)
-        embed.add_field(name="Verification Level", value=f"{verification_level}", inline=False)
-        embed.add_field(name="2FA Status", value=f"{two_factor_auth}", inline=False)
-        embed.add_field(name="Explicit Content Filter", value=f"{explicit_content_filter}", inline=False)
+        embed.add_field(
+            name="**Generic Information**", 
+            value=f"> **Server Owner:** {owner}\n"
+                  f"> **Member Count:** {member_count}\n"
+                  f"> **Creation Date:** {created_at}\n"
+                  f"> **Verification Level:** {verification_level}\n"
+                  f"> **2FA Status:** {two_factor_auth}\n"
+                  f"> **Explicit Content Filter:** {explicit_content_filter}", 
+            inline=False
+        )
+        
+        
         embed.add_field(
             name="Channels",
-            value=f"Text: {text_channels}\nVoice: {voice_channels}\nAnnouncements: {announcement_channels}\nForum: {forum_channels}",
+            value=f"> Text: {text_channels}\n > Voice: {voice_channels}\n > Announcements: {announcement_channels}\n > Forum: {forum_channels}",
             inline=False
         )
 
@@ -377,7 +379,7 @@ class ServerInformationEmbed:
 
         # Boost info
         
-        embed.add_field(name="Boosts", value=f"{boosts} (Tier {boost_tier})", inline=False)
+        embed.add_field(name="Boosts", value=f"> {boosts} (Tier {boost_tier})", inline=False)
 
 
         return embed

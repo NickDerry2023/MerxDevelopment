@@ -16,9 +16,18 @@ class MerxEvents(commands.Cog):
         self.merx = merx
 
     @commands.Cog.listener()
-    async def on_ready(self, ctx: commands.Context = None):
-        await self.merx.change_presence(activity=discord.Activity(name="b;help | beta.merxbot.xyz", type=discord.ActivityType.watching))
-        print(self.merx.user.name + " is ready.")
+    async def on_ready(self):
+        guild_count = len(self.merx.guilds)
+        user_count = sum(guild.member_count for guild in self.merx.guilds)
+
+
+        await self.merx.change_presence(activity=discord.Activity(
+            name=f"{guild_count} Guilds • {user_count:,} Users • /help",
+            type=discord.ActivityType.watching
+        ))
+        
+
+        print(f"{self.merx.user.name} is ready with {guild_count} guilds and {user_count:,} users.")
             
     '''
     @commands.Cog.listener()

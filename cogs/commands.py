@@ -2,6 +2,7 @@ import discord
 import platform
 import uuid
 import shortuuid
+import datetime
 from datetime import datetime
 from discord import Interaction
 from discord.ext import commands
@@ -56,8 +57,18 @@ class CommandsCog(commands.Cog):
         users = sum(guild.member_count for guild in self.merx.guilds)
         version_info = await mongo_db.command('buildInfo')
         version = version_info.get('version', 'Unknown')
+        shards = self.merx.shard_count or 1
+        cluster = 0
+        environment = constants.merx_environment_type()
+        
+        
+        # Formats the date and time
+        
+        command_run_time = datetime.now()
+        formatted_time = command_run_time.strftime("Today at %I:%M %p UTC")
 
 
+        # This builds the emebed.
 
         embed = AboutEmbed.create_info_embed(
             uptime=self.merx.start_time,
@@ -67,8 +78,15 @@ class CommandsCog(commands.Cog):
             version=version,
             bot_name=ctx.guild.name,
             bot_icon=ctx.guild.icon,
+            shards=shards,
+            cluster=cluster,
+            environment=environment,
+            command_run_time=formatted_time,
             thumbnail_url="https://cdn.discordapp.com/avatars/1285105979947749406/3a8b148f12e07c1d83c32d4ed26f618e.png"
         )
+
+
+        # Send the emebed to view.
 
         view = AboutWithButtons.create_view()
 
@@ -99,6 +117,36 @@ class CommandsCog(commands.Cog):
             error_id = shortuuid.ShortUUID().random(length=8)
             print(f"Exception occurred: {e}")
             await send_error_embed(ctx, e, error_id)
+            
+            
+    
+    # This is the space for the ping command which will allow users to ping.
+    
+    @commands.hybrid_command(name="ping", description="Check the bot's latency and uptime.")
+    async def ping(self, ctx: commands.Context):
+  
+        # Calculate latency and uptime
+  
+        websocket_latency = round(self.merx.ws.latency * 1000)
+        uptime_seconds = (datetime.now() - self.merx.start_time).total_seconds()
+        hours, remainder = divmod(uptime_seconds, 3600)
+        minutes, _ = divmod(remainder, 60)
+
+
+        # Create the embed using the SuccessEmbed class
+        
+        embed = SuccessEmbed(
+            title="Bot Status",
+            description="Here are the bot's current stats:",
+            color=discord.Color.green()
+        )
+        
+        
+        embed.add_field(name="Latency", value=f"{self.merx.latency}ms", inline=False)
+        embed.add_field(name="Websocket Latency", value=f"{self.merx.latency}ms", inline=False)
+        embed.add_field(name="Uptime", value=f"{int(hours)} hours, {int(minutes)} minutes", inline=False)
+
+        await ctx.send(embed=embed)
         
 
 
