@@ -165,7 +165,6 @@ class CommandsCog(commands.Cog):
             version=version
         )
 
-        # Send the embed
         await ctx.send(embed=embed)
 
 
