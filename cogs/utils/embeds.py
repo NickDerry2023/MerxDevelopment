@@ -463,17 +463,17 @@ class UserInformationEmbed:
 
 
         if flags.hypesquad_bravery:
-            badges.append("> :houseBravery: HypeSquad Bravery")
+            badges.append("> <:houseBravery:1287991028950761523> HypeSquad Bravery")
         if flags.hypesquad_brilliance:
-            badges.append("> :houseBrilliance: HypeSquad Brilliance")
+            badges.append("> <:houseBrilliance:1287990589773840416> HypeSquad Brilliance")
         if flags.hypesquad_balance:
-            badges.append("> :houseBalance: HypeSquad Balance")
+            badges.append("> <:houseBalance:1287990232591106069> HypeSquad Balance")
         if flags.verified_bot:
-            badges.append("> :verifiedBot: Verified Bot")
+            badges.append("> <:verified:1287994141036384330> Verified Bot")
         if flags.early_supporter:
-            badges.append("> :earlySupporter: Early Supporter")
+            badges.append("> <:EarlyVerifiedDeveloperBadge:1287990726751162368> Early Supporter")
         if flags.active_developer:
-            badges.append("> :activeDeveloper: Active Developer")
+            badges.append("> <:DeveloperBadge:1287990849640075318> Active Developer")
 
 
         embed = discord.Embed(
