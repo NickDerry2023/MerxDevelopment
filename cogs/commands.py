@@ -2,6 +2,7 @@ import discord
 import platform
 import uuid
 import shortuuid
+import time
 import datetime
 import subprocess
 from datetime import datetime
@@ -136,24 +137,64 @@ class CommandsCog(commands.Cog):
             return "Unknown Version"       
             
             
+    # This gets the MongoDB latency using a lightweight command like ping and then mesuring its response time.        
+            
+    async def get_mongo_latency(self):
+        try:
+    
+    
+            mongo_db = await constants.mongo_setup()
+
+
+            if mongo_db is None:
+                print("Failed to connect to MongoDB.")
+                return -1
+
+
+            start_time = time.time()
+            
+            
+            await mongo_db.command('ping')
+
+
+            mongo_latency = round((time.time() - start_time) * 1000)
+            return mongo_latency
+
+
+        except Exception as e:
+            print(f"Error measuring MongoDB latency: {e}")
+            return -1
+    
+            
     
     # This is the space for the ping command which will allow users to ping.
     
-    @commands.hybrid_command(name="ping", description="Check the bot's latency and uptime.")
+    @commands.hybrid_command(name="ping", description="Check the bot's latency and uptime.", with_app_command=True, extras={"category": "Other"})
     async def ping(self, ctx: commands.Context):
         
+        
         latency = self.merx.latency
-        websocket_latency = 0
-        database_latency = 0
+        
+        
+        try:
+            websocket_latency = round(self.merx.ws.latency * 1000)  # In milliseconds
+        except AttributeError:
+            websocket_latency = "Unavailable "  # Fallback to general latency if WebSocket is not initialized
+        
+        
+        database_latency = await self.get_mongo_latency()
+
 
         # Calculate uptime
         
         uptime_seconds = getattr(self.merx, 'uptime', 0)
         uptime_formatted = f"<t:{int((self.merx.start_time.timestamp()))}:R>"
 
+
         # Define the bot version
         
         version = self.get_git_version()
+
 
         # Use the embed creation function from embeds.py
         
@@ -164,6 +205,7 @@ class CommandsCog(commands.Cog):
             uptime=self.merx.start_time,
             version=version
         )
+        
 
         await ctx.send(embed=embed)
 

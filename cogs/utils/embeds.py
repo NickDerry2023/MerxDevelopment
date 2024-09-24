@@ -435,3 +435,77 @@ class PingCommandEmbed(discord.Embed):
 
         return embed
     
+    
+    
+# This is the embed for User Information command also known as whois. 
+
+class UserInformationEmbed:
+    def __init__(self, member, constants):
+        self.member = member
+        self.constants = constants
+
+
+
+    def create_embed(self):
+
+
+        user_mention = self.member.mention
+        display_name = self.member.display_name
+        user_id = self.member.id
+        account_created = self.member.created_at.strftime("%B %d, %Y %I:%M %p")
+        joined_server = self.member.joined_at.strftime("%B %d, %Y %I:%M %p") if self.member.joined_at else "N/A"
+        roles = [role.mention for role in self.member.roles if role.name != "@everyone"]
+        role_count = len(roles)
+        
+        
+        badges = []
+        flags = self.member.public_flags
+
+
+        if flags.hypesquad_bravery:
+            badges.append("> :houseBravery: HypeSquad Bravery")
+        if flags.hypesquad_brilliance:
+            badges.append("> :houseBrilliance: HypeSquad Brilliance")
+        if flags.hypesquad_balance:
+            badges.append("> :houseBalance: HypeSquad Balance")
+        if flags.verified_bot:
+            badges.append("> :verifiedBot: Verified Bot")
+        if flags.early_supporter:
+            badges.append("> :earlySupporter: Early Supporter")
+        if flags.active_developer:
+            badges.append("> :activeDeveloper: Active Developer")
+
+
+        embed = discord.Embed(
+            title=f"User Info - {display_name}",
+            color=self.constants.merx_embed_color_setup(),
+            timestamp=datetime.utcnow()
+        )
+
+
+        embed.add_field(
+            name="**User Information**", 
+            value=f"> **Mention:** {user_mention}\n"
+                  f"> **Display Name:** {display_name}\n"
+                  f"> **User ID:** {user_id}\n"
+                  f"> **Account Created:** {account_created}\n"
+                  f"> **Joined Server:** {joined_server}", 
+            inline=False
+        )
+
+
+        if badges:
+            embed.add_field(name="Badges", value='\n'.join(badges), inline=False)
+        else:
+            embed.add_field(name="Badges", value="No badges", inline=False)
+            
+
+        embed.add_field(name=f"Roles ({role_count})", value=', '.join(roles) if roles else "No Roles", inline=False)
+
+
+        if self.member.bot:
+            embed.set_footer(text="This user is a bot.")
+            
+
+        return embed
+    
