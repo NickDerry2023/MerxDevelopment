@@ -3,12 +3,13 @@ import platform
 import uuid
 import shortuuid
 import datetime
+import subprocess
 from datetime import datetime
 from discord import Interaction
 from discord.ext import commands
 from discord.ui import View, Button
 from cogs.utils.constants import MerxConstants
-from cogs.utils.embeds import AboutEmbed, AboutWithButtons, ServerInformationEmbed
+from cogs.utils.embeds import AboutEmbed, AboutWithButtons, PingCommandEmbed, ServerInformationEmbed
 from cogs.utils.errors import send_error_embed
 
 
@@ -119,35 +120,53 @@ class CommandsCog(commands.Cog):
             await send_error_embed(ctx, e, error_id)
             
             
+            
+    # This will get the version information from GitHub directly. This is so we dont have to change it
+    # each time as that will get anoying fast and I am a lazy developer.
+     
+    def get_git_version(self):
+        try:
+            version = subprocess.check_output(['git', 'describe', '--tags']).decode('utf-8').strip()
+
+            commit = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('utf-8').strip()
+
+            return f"{version} ({commit})"
+        
+        except subprocess.CalledProcessError:
+            return "Unknown Version"       
+            
+            
     
     # This is the space for the ping command which will allow users to ping.
     
     @commands.hybrid_command(name="ping", description="Check the bot's latency and uptime.")
     async def ping(self, ctx: commands.Context):
-  
-        # Calculate latency and uptime
-  
-        websocket_latency = round(self.merx.ws.latency * 1000)
-        uptime_seconds = (datetime.now() - self.merx.start_time).total_seconds()
-        hours, remainder = divmod(uptime_seconds, 3600)
-        minutes, _ = divmod(remainder, 60)
-
-
-        # Create the embed using the SuccessEmbed class
         
-        embed = SuccessEmbed(
-            title="Bot Status",
-            description="Here are the bot's current stats:",
-            color=discord.Color.green()
+        latency = self.merx.latency
+        websocket_latency = 0
+        database_latency = 0
+
+        # Calculate uptime
+        
+        uptime_seconds = getattr(self.merx, 'uptime', 0)
+        uptime_formatted = f"<t:{int((self.merx.start_time.timestamp()))}:R>"
+
+        # Define the bot version
+        
+        version = self.get_git_version()
+
+        # Use the embed creation function from embeds.py
+        
+        embed = PingCommandEmbed.create_ping_embed(
+            latency=latency,
+            websocket_latency=websocket_latency,
+            database_latency=database_latency,
+            uptime=self.merx.start_time,
+            version=version
         )
-        
-        
-        embed.add_field(name="Latency", value=f"{self.merx.latency}ms", inline=False)
-        embed.add_field(name="Websocket Latency", value=f"{self.merx.latency}ms", inline=False)
-        embed.add_field(name="Uptime", value=f"{int(hours)} hours, {int(minutes)} minutes", inline=False)
 
+        # Send the embed
         await ctx.send(embed=embed)
-        
 
 
 async def setup(merx):

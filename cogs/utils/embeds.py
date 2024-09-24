@@ -408,3 +408,30 @@ class SearchResultEmbed(discord.Embed):
         self.add_field(name="Case Number", value=case_number, inline=False)
         self.add_field(name="Collection", value=collection, inline=False)
         self.add_field(name="Details", value=details, inline=False)
+        
+      
+ 
+# This contains the emebed and its parameters for the ping command. This shows things like uptime,
+# latency to discors and mongodb.        
+        
+class PingCommandEmbed(discord.Embed):
+    def create_ping_embed(latency, websocket_latency, database_latency, uptime, version):
+        embed = discord.Embed(
+            title="",
+            color=discord.Color.green()
+        )
+
+        
+        embed.add_field(
+            name="**🏓 Pong!**", 
+            value=f"> **Latency:** {round(latency * 1000)}ms\n"
+                  f"> **Websocket Latency:** {websocket_latency}ms\n"
+                  f"> **Database Latency:** {database_latency}ms\n"
+                  f"> **Uptime:** <t:{int((uptime.timestamp()))}:R>\n"
+                  f"> **Build Version:** {version}\n",
+            inline=False
+        )
+
+
+        return embed
+    
