@@ -15,7 +15,6 @@ class WarnCommandCog(commands.Cog):
         self.constants = MerxConstants()
 
 
-
     @commands.hybrid_command(description="You can run this command to warn a user in your server.", with_app_command=True, extras={"category": "Moderation"})
     @commands.has_permissions(administrator=True)
     async def warn(self, ctx, member: discord.Member, *, reason: str = "No reason provided"):
