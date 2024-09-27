@@ -29,7 +29,7 @@ class ErrorEmbed(discord.Embed):
     def __init__(self, error: Exception, error_id: str):
         super().__init__(
             title="Error Occurred",
-            description=f"**Error ID:** `{error_id}`\n\n**Error Message:** ||{str(error)}||\n\n",
+            description=f"**Error ID:** `{error_id}`\n\n**Error Message:** {str(error)}\n\n",
             color=discord.Color.red()
         )
         self.add_field(
@@ -212,7 +212,7 @@ class AboutWithButtons:
         invite_button = Button(
             label="Invite Merx", 
             style=discord.ButtonStyle.link, 
-            url="https://discord.com/oauth2/authorize?client_id=1285105979947749406&permissions=8&integration_type=0&scope=bot"
+            url="https://discord.com/oauth2/authorize?client_id=1285105545078116453&permissions=8&integration_type=0&scope=bot"
         )
 
 
@@ -452,8 +452,8 @@ class UserInformationEmbed:
         user_mention = self.member.mention
         display_name = self.member.display_name
         user_id = self.member.id
-        account_created = self.member.created_at.strftime("%B %d, %Y %I:%M %p")
-        joined_server = self.member.joined_at.strftime("%B %d, %Y %I:%M %p") if self.member.joined_at else "N/A"
+        account_created = f"<t:{int(self.member.created_at.timestamp())}:F>"
+        joined_server = f"<t:{int(self.member.joined_at.timestamp())}:F>" if self.member.joined_at else "N/A"
         roles = [role.mention for role in self.member.roles if role.name != "@everyone"]
         role_count = len(roles)
         
