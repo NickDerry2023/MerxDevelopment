@@ -243,6 +243,7 @@ class AdminCommandsCog(commands.Cog):
             try:
                 user = await self.merx.fetch_user(int(id))
                 result = await collection.delete_one({"discord_id": user.id, "type": "user"})
+                await constants.fetch_blacklisted_users()
                 if result.deleted_count == 0:
                     await self.send_message(ctx, f"<:xmark:1285350796841582612> {user.mention} is not blacklisted.")
                     return
@@ -274,6 +275,7 @@ class AdminCommandsCog(commands.Cog):
         elif entity_type == "guild":
             guild_id = int(id)
             result = await collection.delete_one({"discord_id": guild_id, "type": "guild"})
+            await constants.fetch_blacklisted_guilds()
             
             
             if result.deleted_count == 0:
@@ -369,6 +371,7 @@ class AdminCommandsCog(commands.Cog):
                     return
 
                 await collection.insert_one({"discord_id": user.id, "type": "user", "case_number": case_number})
+                await constants.fetch_blacklisted_users()
                 await self.send_message(ctx, f"<:whitecheck:1285350764595773451> **{case_number} - {user.mention}** has been blacklisted.")
             
             
@@ -396,6 +399,7 @@ class AdminCommandsCog(commands.Cog):
 
 
             await collection.insert_one({"discord_id": guild_id, "type": "guild", "case_number": case_number})
+            await constants.fetch_blacklisted_guilds()
             await self.send_message(ctx, f"<:whitecheck:1285350764595773451> **{case_number} - Guild ID {id}** has been blacklisted.")
 
 
