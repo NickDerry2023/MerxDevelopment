@@ -545,7 +545,6 @@ class CheckGuildEmbed(discord.Embed):
         return embed
     
     
-    
 # This specifices the afk emebed error, telling use
     
 class AfkEmbed(discord.Embed):
@@ -560,3 +559,30 @@ class AfkEmbed(discord.Embed):
         
         
         self.set_footer(text="They will respond when they are back.")
+
+
+class EmojiFindEmbed:
+    def __init__(self, emoji):
+        self.emoji = emoji
+        self.constants = constants
+    
+    def create_embed(self):
+        emoji_guild = self.emoji.guild
+        emoji_name = self.emoji.name
+        emoji_animated = self.emoji.animated
+        emoji_created = self.emoji.created_at.timestamp()
+        emoji_id = self.emoji.id
+        emoji_url = self.emoji.url
+
+
+        embed = discord.Embed(
+            title="",
+            description=f"**Name**\n> {emoji_name}\n\n**Id**\n> {emoji_id}\n\n**Animated**\n> {emoji_animated}\n\n**Created**\n> <t:{int(emoji_created)}:f>",
+            color=self.constants.merx_embed_color_setup()
+        )
+
+
+        embed.set_author(name=f"{emoji_guild} emoji.", icon_url=emoji_guild.icon.url)
+        embed.set_thumbnail(url=emoji_url)
+
+        return embed
