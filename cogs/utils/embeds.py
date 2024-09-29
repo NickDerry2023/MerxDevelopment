@@ -508,4 +508,40 @@ class UserInformationEmbed:
             
 
         return embed
+
+class CheckGuildEmbed(discord.Embed):
+    def create_valid_guild_embed(self, guild: discord.Guild):
+        embed = discord.Embed(
+            title="Valid Guild",
+            description="I have found that guild here is the information on it.",
+            color=self.constants.merx_embed_color_setup()
+        )
+        owner = guild.owner
+        member_count = guild.member_count
+        created_at = guild.created_at.strftime("%B %d, %Y")
+        boosts = guild.premium_subscription_count
+        boost_tier = guild.premium_tier
+        icon_url = guild.icon.url if guild.icon else None
+
+        embed.add_field(
+            name="Information",
+            value=f"> **Name:** {guild.name}\n"
+            f"> **Server Owner:** {owner}"
+            f"> **Member Count:** {member_count}"
+            f"> **Created At:** {created_at}"
+            f"> **Boosts:** {boosts}"
+            f"> **Boost Tier:** {boost_tier}"
+        )
+        embed.set_thumbnail(url=icon_url)
+
+        return embed
+    def create_invalid_guild_embed(id):
+        embed = discord.Embed(
+            title="Invalid Guild",
+            description=f"The guild by the id of ({id})",
+            color=discord.Color.red()
+        )
+
+        return embed
+    
     

@@ -30,12 +30,12 @@ class ModLogsCommandCog(commands.Cog):
         
         
         warn_collection = mongo_db["warns"]
-        ban_collection = mongo_db["ban_collection"]
+        bans = mongo_db["bans"]
         blacklist_collection = mongo_db["blacklists"]
 
 
         warnings = await warn_collection.find({"warned_user_id": str(user_id)}).to_list(length=None)
-        bans = await ban_collection.find({"banned_user_id": str(user_id)}).to_list(length=None)
+        bans = await bans.find({"banned_user_id": str(user_id)}).to_list(length=None)
         blacklists = await blacklist_collection.find({"discord_id": str(user_id)}).to_list(length=None)
         
         
@@ -63,7 +63,7 @@ class ModLogsCommandCog(commands.Cog):
         
         
         warn_collection = mongo_db["warns"]
-        ban_collection = mongo_db["ban_collection"]
+        bans = mongo_db["bans"]
         blacklist_collection = mongo_db["blacklists"]
         
         
@@ -78,7 +78,7 @@ class ModLogsCommandCog(commands.Cog):
             for ban in logs['bans']:
                 
                 
-                await ban_collection.update_one({"_id": ban["_id"]}, {"$set": {"banned_user_id": str(user_id)}})
+                await bans.update_one({"_id": ban["_id"]}, {"$set": {"banned_user_id": str(user_id)}})
                 
                 
         if logs['blacklists']:
@@ -101,7 +101,7 @@ class ModLogsCommandCog(commands.Cog):
         
         
         warn_collection = mongo_db["warns"]
-        ban_collection = mongo_db["ban_collection"]
+        bans = mongo_db["bans"]
         blacklist_collection = mongo_db["blacklists"]
         
         

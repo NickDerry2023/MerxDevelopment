@@ -3,7 +3,7 @@ import asyncio
 import uuid
 import shortuuid
 from discord.ext import commands
-from cogs.utils.embeds import DebugEmbed, PermissionDeniedEmbed
+from cogs.utils.embeds import DebugEmbed, PermissionDeniedEmbed, CheckGuildEmbed
 from cogs.utils.constants import MerxConstants
 
 
@@ -46,6 +46,17 @@ class AdminCommandsCog(commands.Cog):
         # Send the embed with debugging information
         
         await ctx.send(embed=DebugEmbed(self.merx, ctx))
+    
+    @commands.hybrid_command(name="check-guild", description="Checks if the bot is in a guild and gets info about it.", with_app_command=True, extras={"category": "Administration"})
+    async def check_guild(self, ctx: commands.Context, id):
+        guild = self.merx.get_guild(id)
+
+        if guild == None:
+            await ctx.send(embed=CheckGuildEmbed.create_invalid_guild_embed(id))
+            return 
+        
+        await ctx.send(embed=CheckGuildEmbed.create_valid_guild_embed(self, guild))
+
         
        
         
