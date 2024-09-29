@@ -60,7 +60,7 @@ intents.members = True
 
 # Set bot prefix
 
-prefix =  constants.prefix_setup()
+prefix =  constants.prefix_setup
 
 
 # Intializes Merx Bot and loads the prefix, intents, and other important things for discord.
