@@ -545,3 +545,18 @@ class CheckGuildEmbed(discord.Embed):
         return embed
     
     
+    
+# This specifices the afk emebed error, telling use
+    
+class AfkEmbed(discord.Embed):
+    
+    
+    def __init__(self, user: discord.User, reason: str):
+        super().__init__(
+            title=f"{user.name} is currently AFK",
+            description=f"> Reason: {reason}",
+            color=constants.merx_embed_color_setup()
+        )
+        
+        
+        self.set_footer(text="They will respond when they are back.")

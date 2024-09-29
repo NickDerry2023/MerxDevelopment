@@ -47,9 +47,11 @@ class AdminCommandsCog(commands.Cog):
         
         await ctx.send(embed=DebugEmbed(self.merx, ctx))
     
-    @commands.hybrid_command(name="check-guild", description="Checks if the bot is in a guild and gets info about it.", with_app_command=True, extras={"category": "Administration"})
-    async def check_guild(self, ctx: commands.Context, id):
+    @commands.hybrid_command(name="check_guild", description="Checks if the bot is in a guild and gets info about it.", with_app_command=True, extras={"category": "Administration"})
+    async def check_guild(self, ctx: commands.Context, id: str):
+        print(id)
         guild = self.merx.get_guild(id)
+        print(guild)
 
         if guild == None:
             await ctx.send(embed=CheckGuildEmbed.create_invalid_guild_embed(id))
