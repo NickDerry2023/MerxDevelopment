@@ -11,6 +11,8 @@ class EnlargeCommandCog(commands.Cog):
     def __init__(self, merx):
         self.merx = merx
     
+
+    
     @commands.hybrid_command(description="Enlarges a provided emoji.", with_app_command=True, extras={"category": "General"})
     async def enlarge(self, ctx, emoji: discord.Emoji):
 
@@ -31,6 +33,8 @@ class EnlargeCommandCog(commands.Cog):
 
         
         await ctx.send(embed=embed)
+
+
 
 async def setup(merx):
     await merx.add_cog(EnlargeCommandCog(merx))

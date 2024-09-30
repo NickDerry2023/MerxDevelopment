@@ -12,10 +12,11 @@ from cogs.utils.embeds import ErrorEmbed, PermissionDeniedEmbed
 from cogs.utils.errors import send_error_embed
 from cogs.utils.constants import MerxConstants
 
-constants = MerxConstants()
 
 
 CHANNEL_NAME_FOR_WELCOME = ["chat", "general"]
+constants = MerxConstants()
+prefix =  constants.prefix_setup
 
 
 class MerxEvents(commands.Cog):
@@ -41,7 +42,21 @@ class MerxEvents(commands.Cog):
         ))
 
         print(f"{self.merx.user.name} is ready with {guild_count} guilds and {user_count:,} users.")
+        
+        
+        
+    @commands.Cog.listener()
+    async def on_message(self, ctx: commands.Context):
+        if ctx.author == self.merx.user:
+            return
+        
+        try:
+            if self.merx.user.mentioned_in(ctx) and len(ctx.content.split(' ')) == 1 and ctx.content[-1] == ">" and ctx.content[0] == '<':
+                return await ctx.channel.send(f"My prefix is `{prefix}`, try to use `{prefix}help` for a list of commands!")
+        except:
+            pass
     
+
 
     if constants.merx_environment_type() == "Development":
         @commands.Cog.listener()
@@ -67,6 +82,8 @@ class MerxEvents(commands.Cog):
                     await guild.leave()
                     await channel.send(embed=embed)
                     
+
+
         @commands.Cog.listener()
         async def on_guild_join(self, guild: discord.Guild):
             id = guild.id
@@ -91,6 +108,7 @@ class MerxEvents(commands.Cog):
             await channel.send(embed=embed)
 
 
+
     # This updated the guilds and users periodically every 30 seconds.
 
     @tasks.loop(seconds=30)
@@ -104,6 +122,7 @@ class MerxEvents(commands.Cog):
             type=discord.ActivityType.watching
         ))
             
+
 
     if constants.merx_environment_type() == "Production":
         @commands.Cog.listener()
@@ -129,6 +148,7 @@ class MerxEvents(commands.Cog):
         await ctx.send(embed=embed)
 
 
+
     async def handle_error(self, ctx, error):
         if hasattr(ctx, 'handled'):
             return
@@ -139,6 +159,7 @@ class MerxEvents(commands.Cog):
             await ctx.send(embed=ErrorEmbed(error=error, error_id=error_id))
 
 
+
     # These are the cog error handlers they determine how the error is sent.
 
     @commands.Cog.listener()
@@ -146,9 +167,11 @@ class MerxEvents(commands.Cog):
         await self.handle_error(ctx, error.original if isinstance(error, commands.CommandInvokeError) else error)
 
 
+
     @commands.Cog.listener()
     async def on_application_command_error(self, interaction: discord.Interaction, error):
         await self.handle_error(interaction, error)
+
 
 
 async def setup(merx):
