@@ -79,6 +79,30 @@ class MerxConstants:
         if not isinstance(token, str):
             raise TypeError(f'expected token to be a str, received {type(token).__name__} instead')
         return token
+    
+    
+    
+    def merx_client_id_setup(self):
+        token = os.getenv('CLIENT_ID')
+        if not isinstance(token, str):
+            raise TypeError(f'expected token to be a str, received {type(token).__name__} instead')
+        return token
+    
+    
+    
+    def merx_client_secret_setup(self):
+        token = os.getenv('CLIENT_SECRET')
+        if not isinstance(token, str):
+            raise TypeError(f'expected token to be a str, received {type(token).__name__} instead')
+        return token
+    
+    
+    
+    def merx_redirect_uri_setup(self):
+        token = os.getenv('REDIRECT_URL')
+        if not isinstance(token, str):
+            raise TypeError(f'expected token to be a str, received {type(token).__name__} instead')
+        return token
 
 
 

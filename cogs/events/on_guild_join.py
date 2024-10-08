@@ -10,8 +10,8 @@ class OnGuildJoin(commands.Cog):
     async def on_guild_join(self, guild: discord.Guild):
         id = guild.id
         owner = guild.get_member(guild.owner_id)
-        is_dev_guild = id in self.beta_guilds
-        channel = self.merx.get_guild(self.beta_guilds[0]).get_channel(1289772928082378852)
+        is_dev_guild = id in self.merx.beta_guilds
+        channel = self.merx.get_guild(self.merx.beta_guilds[0]).get_channel(1289772928082378852)
 
         # Check if owner is None
         if owner is None:

@@ -58,18 +58,19 @@ class SetupDropdown(discord.ui.Select):
 
         if self.values[0] == "bot_config":
             await interaction.response.send_modal(BotConfigModal(self.view.merx, str(uuid.uuid4()), interaction.guild.id))
-            
+            await interaction.message.edit() # DONT REMOVE IT RESETS THE DROPDOWN
             
         elif self.values[0] == "plugin_config":
             await interaction.response.send_modal(PluginConfigModal(self.view.merx, str(uuid.uuid4()), interaction.guild.id))
-            
+            await interaction.message.edit() # DONT REMOVE IT RESETS THE DROPDOWN
             
         elif self.values[0] == "moderation_config":
             await interaction.response.send_modal(PluginConfigModal(self.view.merx, str(uuid.uuid4()), interaction.guild.id))
-            
+            await interaction.message.edit() # DONT REMOVE IT RESETS THE DROPDOWN
             
         elif self.values[0] == "administration_config":
             await interaction.response.send_modal(PluginConfigModal(self.view.merx, str(uuid.uuid4()), interaction.guild.id))
+            await interaction.message.edit() # DONT REMOVE IT RESETS THE DROPDOWN
 
 
 

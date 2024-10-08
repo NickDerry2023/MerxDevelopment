@@ -52,6 +52,7 @@ class HelpCommandsCog(commands.Cog):
                 )
                 
                 await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.message.edit() # DONT REMOVE IT RESETS THE DROPDOWN
 
 
             # Gets the commands in the catagory and prepares them to be listed.

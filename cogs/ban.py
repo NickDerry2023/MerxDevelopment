@@ -2,27 +2,21 @@ import discord
 import asyncio
 import uuid
 from discord.ext import commands
-from utils.constants import MerxConstants, cases
- 
-
-# This is the admins cog for the bots admin commands that only server admins may run.
-# This includes a ban command to ban members from your server.
+from utils.constants import cases
+from utils.utils import get_next_case_id
+import time
 
 class BanCommandCog(commands.Cog):
     def __init__(self, merx):
         self.merx = merx
-        self.constants = MerxConstants()
-
     
     @commands.hybrid_command(name="ban", description="Ban command to ban members from your server.", with_app_command=True, extras={"category": "Moderation"})
     @commands.has_guild_permissions(ban_members=True)
     async def ban(self, ctx: commands.Context, member: discord.User, *, reason: str = "Nothing was provided"):
-        
-        
         try:
             fetched_member: discord.Member = await self.merx.fetch_user(member.id)
         except Exception as e:
-            return await ctx.send(e)
+            raise commands.CommandInvokeError(e)
         
         
         banned_users = ctx.guild.bans()
@@ -56,17 +50,13 @@ class BanCommandCog(commands.Cog):
             
         except AttributeError:
             pass
-
-
-        # Generate a unique case number
-        
-        case_number = f"Case #{str(uuid.uuid4().int)[:4]}"  # Generate a short unique case number
-        
-        
+         
         # Sends a DM to the user
         
+        case_id = await get_next_case_id(ctx.guild.id)
+
         try:
-            dm_message = f"<:whitecheck:1285350764595773451> **{case_number} - You have been banned from {ctx.guild.name}** for {reason}."
+            dm_message = f"<:whitecheck:1285350764595773451> **{case_id} - You have been banned from {ctx.guild.name}** for {reason}."
             await fetched_member.send(dm_message)
         except discord.Forbidden:
             await ctx.send(f"<:xmark:1285350796841582612> Unable to send a DM to {fetched_member.mention}; proceeding with the ban.")
@@ -81,22 +71,20 @@ class BanCommandCog(commands.Cog):
         # Log to MongoDB
         
         ban_entry = {
-            "case_number": case_number,
+            "case_id": case_id,
             "guild_id": ctx.guild.id,
-            "guild_name": ctx.guild.name,
-            "banned_user_id": member.id,
-            "banned_user_name": str(member),
-            "banned_by_id": ctx.author.id,
-            "banned_by_name": str(ctx.author),
+            "user_id": member.id,
+            "moderator_id": ctx.author.id,
             "reason": reason,
-            "timestamp": ctx.message.created_at.isoformat()
+            "timestamp": int(time.time()),
+            "type": "ban",
+            "status": "active"
         }
-        
         await cases.insert_one(ban_entry)
 
         # Send the success message
         
-        await ctx.send(f"<:whitecheck:1285350764595773451> **{case_number} - {member}** has been banned for {reason}.")
+        await ctx.send(f"<:whitecheck:1285350764595773451> **{case_id} - {member}** has been banned for {reason}.")
             
             
             
@@ -133,7 +121,7 @@ class BanCommandCog(commands.Cog):
 
             await ctx.guild.unban(user_to_unban, reason=reason)
             case_number = f"Case #{str(uuid.uuid4().int)[:4]}"  # Generate a short unique case number
-            await ctx.send(f"<:whitecheck:1285350764595773451> **{case_number} - Successfully unbanned {user_to_unban.mention}** for: {reason}.", ephemeral=True)
+            await ctx.send(f"<:whitecheck:1285350764595773451> **Case #{case_number} - Successfully unbanned {user_to_unban.mention}** for: {reason}.", ephemeral=True)
 
 
         except discord.Forbidden:
@@ -151,7 +139,7 @@ class BanCommandCog(commands.Cog):
 
         await ctx.guild.ban(member, reason=reason, delete_message_days=1)
         case_number = f"Case #{str(uuid.uuid4().int)[:4]}"  # Generate a short unique case number
-        await ctx.send(f"<:whitecheck:1285350764595773451> **{case_number} - Successfully softbanned {member.mention}** for: {reason}")
+        await ctx.send(f"<:whitecheck:1285350764595773451> **Case #{case_number} - Successfully softbanned {member.mention}** for: {reason}")
         await asyncio.sleep(2)
         await ctx.guild.unban(member)
         

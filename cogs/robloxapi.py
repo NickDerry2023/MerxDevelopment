@@ -118,7 +118,7 @@ class Verification(commands.Cog):
 
         async for user in verify_waiting.find({}):
             if await check_roblox_bio(user.result.get('id'), user.result.get('code')):
-                self.merx
+                self
 
 
 

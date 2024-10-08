@@ -5,7 +5,7 @@ import asyncio
 import sentry_sdk
 from datetime import datetime
 from discord.ext import commands
-from utils.constants import MerxConstants
+from utils.constants import MerxConstants, afks
 from cogwatch import watch
 
 # We use constants.py to specify things like the mongo db connnection, prefix
@@ -21,12 +21,23 @@ class Merx(commands.AutoShardedBot):
         self.start_time = datetime.now()
         self.beta_guilds = [
             1285107028892717118, # Merx Systems Discord
+            1058691867484639232, # Feme's bot testing
         ]
         
         
         
     @watch(path="cogs", preload=False)
     async def on_ready(self):
+        merx.afk_users = []
+
+        all_afks = afks.find({})
+        async for afk in all_afks:
+            afk_doc = {
+                'user_id': afk.get('user_id'),
+                'guild_id': afk.get('guild_id')
+            }
+            merx.afk_users.append(afk_doc)
+
         if constants.merx_environment_type() == "Development":
             for guild in merx.guilds:
                 

@@ -75,7 +75,7 @@ class UserErrorEmbed(discord.Embed):
     def __init__(self, error_id):
         super().__init__(
             title="Something Went Wrong",
-            description=f"Please contact [Merx Support](https://discord.gg/merxbot)!\nError ID: `{error_id}`",
+            description=f"Please contact [Merx Support](https://discord.gg/merxbot) or email `support@merxbot.xyz`!\nError ID: `{error_id}`",
             color=discord.Color.red()
         )
 
@@ -479,72 +479,142 @@ class PingCommandEmbed(discord.Embed):
 # This is the embed for User Information command also known as whois. 
 
 class UserInformationEmbed:
-    def __init__(self, member, constants):
+    def __init__(self, member, constants, merx):
         self.member = member
+        self.merx = merx
         self.constants = constants
 
 
 
-    def create_embed(self):
+    async def create_embed(self):
 
-
-        user_mention = self.member.mention
-        display_name = self.member.display_name
-        user_id = self.member.id
-        account_created = f"<t:{int(self.member.created_at.timestamp())}:F>"
-        joined_server = f"<t:{int(self.member.joined_at.timestamp())}:F>" if self.member.joined_at else "N/A"
-        roles = [role.mention for role in self.member.roles if role.name != "@everyone"]
-        role_count = len(roles)
-        
-        
-        badges = []
-        flags = self.member.public_flags
-
-
-        if flags.hypesquad_bravery:
-            badges.append("> <:houseBravery:1287991028950761523> HypeSquad Bravery")
-        if flags.hypesquad_brilliance:
-            badges.append("> <:houseBrilliance:1287990589773840416> HypeSquad Brilliance")
-        if flags.hypesquad_balance:
-            badges.append("> <:houseBalance:1287990232591106069> HypeSquad Balance")
-        if flags.verified_bot:
-            badges.append("> <:verified:1287994141036384330> Verified Bot")
-        if flags.early_supporter:
-            badges.append("> <:EarlyVerifiedDeveloperBadge:1287990726751162368> Early Supporter")
-        if flags.active_developer:
-            badges.append("> <:DeveloperBadge:1287990849640075318> Active Developer")
-
-
-        embed = discord.Embed(
-            title=f"User Info - {display_name}",
-            color=self.constants.merx_embed_color_setup(),
-            timestamp=datetime.utcnow()
-        )
-
-
-        embed.add_field(
-            name="**User Information**", 
-            value=f"> **Mention:** {user_mention}\n"
-                  f"> **Display Name:** {display_name}\n"
-                  f"> **User ID:** {user_id}\n"
-                  f"> **Account Created:** {account_created}\n"
-                  f"> **Joined Server:** {joined_server}", 
-            inline=False
-        )
-
-
-        if badges:
-            embed.add_field(name="Badges", value='\n'.join(badges), inline=False)
-        else:
-            embed.add_field(name="Badges", value="No badges", inline=False)
+        try:
+            user_mention = self.member.mention
+            display_name = self.member.display_name
+            user_id = self.member.id
+            account_created = f"<t:{int(self.member.created_at.timestamp())}:F>"
+            joined_server = f"<t:{int(self.member.joined_at.timestamp())}:F>" if self.member.joined_at else "N/A"
+            roles = [role.mention for role in self.member.roles if role.name != "@everyone"]
+            role_count = len(roles)
             
-
-        embed.add_field(name=f"Roles ({role_count})", value=', '.join(roles) if roles else "No Roles", inline=False)
-
-
-        if self.member.bot:
-            embed.set_footer(text="This user is a bot.")
             
+            badges = []
+            flags = self.member.public_flags
+
+
+            if flags.hypesquad_bravery:
+                badges.append("> <:houseBravery:1287991028950761523> HypeSquad Bravery")
+            if flags.hypesquad_brilliance:
+                badges.append("> <:houseBrilliance:1287990589773840416> HypeSquad Brilliance")
+            if flags.hypesquad_balance:
+                badges.append("> <:houseBalance:1287990232591106069> HypeSquad Balance")
+            if flags.verified_bot:
+                badges.append("> <:verified:1287994141036384330> Verified Bot")
+            if flags.early_supporter:
+                badges.append("> <:EarlyVerifiedDeveloperBadge:1287990726751162368> Early Supporter")
+            if flags.active_developer:
+                badges.append("> <:DeveloperBadge:1287990849640075318> Active Developer")
+            
+            try:
+                guild = self.merx.get_guild(1285107028892717118)
+                guild_member = await guild.fetch_member(self.member.id)
+                staff_roles = [
+                    1285107029093912637, # Merx Team
+                    1285107029093912636, # Development Team
+                    1286165370926792806, # Management Team
+                    1285107029005959206, # Support Team
+                ]
+
+                for role_id in staff_roles:
+                    if discord.utils.get(guild_member.roles, id=role_id):
+                        badges.append("> <:Merx:1290733278885576724> Merx Staff")
+                        break
+            except discord.NotFound:
+                print("Member not found.")
+            except discord.Forbidden:
+                print("Bot does not have permission to fetch this member.")
+            except Exception as e:
+                print(f"Error running the role check: {e}")
+
+            embed = discord.Embed(
+                title=f"User Info - {display_name}",
+                color=self.constants.merx_embed_color_setup(),
+                timestamp=datetime.utcnow()
+            )
+
+
+            embed.add_field(
+                name="**User Information**", 
+                value=f"> **Mention:** {user_mention}\n"
+                    f"> **Display Name:** {display_name}\n"
+                    f"> **User ID:** {user_id}\n"
+                    f"> **Account Created:** {account_created}\n"
+                    f"> **Joined Server:** {joined_server}", 
+                inline=False
+            )
+
+            embed.set_thumbnail(url=self.member.display_avatar.url)
+
+
+            if badges:
+                embed.add_field(name="Badges", value='\n'.join(badges), inline=False)
+            else:
+                embed.add_field(name="Badges", value="No badges", inline=False)
+                
+
+            embed.add_field(name=f"Roles ({role_count})", value=', '.join(roles) if roles else "No Roles", inline=False)
+
+
+            if self.member.bot:
+                embed.set_footer(text="This user is a bot.")
+        except Exception:
+            user_mention = self.member.mention
+            display_name = self.member.display_name
+            user_id = self.member.id
+            account_created = f"<t:{int(self.member.created_at.timestamp())}:F>"
+
+            badges = []
+            flags = self.member.public_flags
+
+            if flags.hypesquad_bravery:
+                badges.append("> <:houseBravery:1287991028950761523> HypeSquad Bravery")
+            if flags.hypesquad_brilliance:
+                badges.append("> <:houseBrilliance:1287990589773840416> HypeSquad Brilliance")
+            if flags.hypesquad_balance:
+                badges.append("> <:houseBalance:1287990232591106069> HypeSquad Balance")
+            if flags.verified_bot:
+                badges.append("> <:verified:1287994141036384330> Verified Bot")
+            if flags.early_supporter:
+                badges.append("> <:EarlyVerifiedDeveloperBadge:1287990726751162368> Early Supporter")
+            if flags.active_developer:
+                badges.append("> <:DeveloperBadge:1287990849640075318> Active Developer")
+            
+            embed = discord.Embed(
+                title=f"User Info - {display_name}",
+                color=self.constants.merx_embed_color_setup(),
+                timestamp=datetime.utcnow()
+            )
+
+
+            embed.add_field(
+                name="**User Information**", 
+                value=f"> **Mention:** {user_mention}\n"
+                    f"> **Display Name:** {display_name}\n"
+                    f"> **User ID:** {user_id}\n"
+                    f"> **Account Created:** {account_created}\n",
+                inline=False
+            )
+
+            embed.set_thumbnail(url=self.member.display_avatar.url)
+
+
+            if badges:
+                embed.add_field(name="Badges", value='\n'.join(badges), inline=False)
+            else:
+                embed.add_field(name="Badges", value="No badges", inline=False)
+            
+            if self.member.bot:
+                embed.set_footer(text="This user is a bot.")
 
         return embed
 
@@ -593,7 +663,7 @@ class AfkEmbed(discord.Embed):
     def __init__(self, user: discord.User, reason: str):
         super().__init__(
             title=f"{user.name} is currently AFK",
-            description=f"> Reason: {reason}",
+            description=f"> Message: {reason}",
             color=constants.merx_embed_color_setup()
         )
         
@@ -670,3 +740,31 @@ class ReminderEmbed(discord.Embed):
         self.title = ""
         self.description = f"<:whitecheck:1285350764595773451> Got it! I have set a reminder. It will go off at **{reminder_time}**."
         self.color = discord.Color.green()
+        
+        
+# This is the Roles Information Embed that shows information about certain roles.        
+        
+class RolesInformationEmbed:
+    @staticmethod
+    def create(role: discord.Role, target):
+        embed = discord.Embed(
+            title=f"Role Information: {role.name}",
+            color=constants.merx_embed_color_setup()
+        )
+        embed.add_field(name="Role ID", value=role.id, inline=False)
+        embed.add_field(name="Role Color", value=str(role.color), inline=False)
+        embed.add_field(name="Members", value=len(role.members), inline=False)
+        embed.add_field(name="Mentionable", value=role.mentionable, inline=False)
+        embed.add_field(name="Hoisted", value=role.hoist, inline=False)
+        embed.add_field(name="Position", value=role.position, inline=False)
+        embed.add_field(
+            name="Permissions",
+            value=', '.join(perm[0] for perm in role.permissions if perm[1]),
+            inline=False
+        )
+
+        if isinstance(target, discord.Interaction):
+            return embed  # We'll handle the response in the calling code
+        else:
+            embed.set_footer(text=f"Requested by {target.author}", icon_url=target.author.avatar.url)
+            return embed

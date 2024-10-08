@@ -27,9 +27,7 @@ class AvatarCommandCog(commands.Cog):
         )
         
         
-        # Send the actual embed with a footer.
-        
-        embed.set_image(url=user.avatar.url)
+        embed.set_image(url=user.display_avatar.url)
         embed.set_footer(text=f"Requested by {ctx.author}")
 
 
