@@ -33,6 +33,7 @@ class OnMemberJoin(commands.Cog):
                         1285107029093912637, # Merx Team
                         1285107029093912636, # Development Team
                         1286165370926792806, # Management Team
+                        1285107029060489232, # Management 2
                         1285107029005959206, # Support Team
                     ]
 
