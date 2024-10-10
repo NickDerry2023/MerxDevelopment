@@ -48,8 +48,7 @@ class BotConfigModal(Modal):
         response_message = f"<:whitecheck:1285350764595773451> Bot prefix set to `{prefix}` and theme color set to `{theme_color}`."
         setup_cog = self.bot.get_cog('SetupCog')
         if setup_cog.setup_message_id:
-            setup_message = await interaction.channel.fetch_message(setup_cog.setup_message_id)
-            await setup_message.edit(content=response_message, embed=None, view=None)
+            await interaction.response.send_message(response_message, ephemeral=True)
         else:
             await interaction.response.send_message(response_message, ephemeral=True)
             
