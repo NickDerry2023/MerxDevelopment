@@ -17,7 +17,9 @@ class OnCommandError(commands.Cog):
             embed = MissingArgsEmbed(error.param.name)
             return await ctx.send(embed=embed)
 
-
+        elif isinstance(error, discord.Forbidden):
+            embed = discord.Embed(title="Missing Permissions", description=="I do not have permission to do this!", color=discord.Color.red())
+            return await ctx.send(embed=embed)
 
         elif isinstance(error, commands.BadArgument):
             embed = BadArgumentEmbed()
