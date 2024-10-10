@@ -13,7 +13,12 @@ class ModLogsCommandCog(commands.Cog):
         return
     
     @modlogs.command(description="View all modlogs for certain user", with_app_command=True, extras={"category": "Moderation"})
-    async def view(self, ctx, member: discord.Member):  
+    async def view(self, ctx, member: discord.User):  
+        try:
+            fetched_member: discord.Member = await self.merx.fetch_user(member.id)
+        except Exception as e:
+            raise commands.CommandInvokeError(e)
+            
         number = 0
         
         embed = discord.Embed(title=f"", description="", color=self.constants.merx_embed_color_setup(), timestamp=datetime.utcnow())
@@ -43,7 +48,12 @@ class ModLogsCommandCog(commands.Cog):
         await ctx.send(f"All moderation logs for **{olduser.name}** have been transfered to **{newuser}**")
     
     @modlogs.command(description="Clear all modlogs for a certain user", with_app_command=True, extras={"category": "Moderation"})
-    async def clear(self, ctx, member: discord.Member = None):
+    async def clear(self, ctx, member: discord.User = None):
+        try:
+            fetched_member: discord.Member = await self.merx.fetch_user(member.id)
+        except Exception as e:
+            raise commands.CommandInvokeError(e)
+            
         results = cases.find({'user_id': member.id, "guild_id": ctx.guild.id})
         async for result in results:
             case_info = await cases.find_one_and_update({'case_id': result.get('case_id'), 'guild_id': ctx.guild.id}, {'$set': {'status': 'cleared'}})
