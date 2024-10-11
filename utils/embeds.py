@@ -408,7 +408,7 @@ class ServerInformationEmbed:
 
         # Roles
         
-        roles_list = ', '.join([role.mention for role in self.guild.roles[1:20]])
+        roles_list = ', '.join([role.mention for role in reversed(self.guild.roles[:20])])
         if role_count > 20:
             roles_list += f"... and {role_count - 20} more roles."
         embed.add_field(name=f"Roles ({role_count})", value=roles_list, inline=False)
@@ -494,7 +494,7 @@ class UserInformationEmbed:
             user_id = self.member.id
             account_created = f"<t:{int(self.member.created_at.timestamp())}:F>"
             joined_server = f"<t:{int(self.member.joined_at.timestamp())}:F>" if self.member.joined_at else "N/A"
-            roles = [role.mention for role in self.member.roles if role.name != "@everyone"]
+            roles = [role.mention for role in reversed(self.member.roles) if role.name != "@everyone"]
             role_count = len(roles)
             
             
